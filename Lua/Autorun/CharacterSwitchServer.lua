@@ -25,7 +25,7 @@ Networking.Receive("ChangeCharacter", function(msg, client)
 end)
 
 Hook.Patch(
-    "debug_character_create_prefab",
+    "EnableCharacterAI",
     "Barotrauma.Character",
     "Create",
     {
@@ -41,12 +41,6 @@ Hook.Patch(
         "System.Boolean"
     },
     function(instance, ptable)
-        print(
-            "[CREATE PREFAB] " ..
-            "remote=" .. tostring(ptable["isRemotePlayer"]) ..
-            " ai=" .. tostring(ptable["hasAi"])
-        )
-
         if ptable["isRemotePlayer"] == true and ptable["hasAi"] == false then
             print("[CREATE PREFAB] *** PLAYER CHARACTER ***")
             print("[CREATE PREFAB] forcing hasAi=true")
@@ -76,12 +70,6 @@ Hook.Patch(
             if ending then
                 local save = inc.ReadBoolean()
                 local quitCampaign = inc.ReadBoolean()
-
-                print(
-                    "end=" .. tostring(ending) ..
-                    " save=" .. tostring(save) ..
-                    " quit=" .. tostring(quitCampaign)
-                )
 
                 if ending then
                     UpdateClientNameList()
