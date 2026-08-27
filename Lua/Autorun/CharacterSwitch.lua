@@ -172,8 +172,11 @@ local function CycleCharacter(offset)
             currentCharacterIndex = #playableCharacterList + 1
             offset = startOffset
         end
+
         if Util.FindClientCharacter(playableCharacterList[currentCharacterIndex+offset]) == nil then
             ChangeCharacter(playableCharacterList[currentCharacterIndex+offset])
+            break
+        elseif offset > #playableCharacterList then
             break
         else
             if offset > 0 then
