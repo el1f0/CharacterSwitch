@@ -3,7 +3,7 @@
 This is a mod for Barotrauma, which enables switching between characters in a multiplayer server.
 
 # Installation steps
-1. Install [LuaCsForBarotrauma](/https://steamcommunity.com/sharedfiles/filedetails/?id=2559634234) from the Steam workshop.
+1. Install [LuaCsForBarotrauma](https://steamcommunity.com/sharedfiles/filedetails/?id=2559634234) from the Steam workshop.
 2. Download the code and place it so that it looks like this **Barotrauma/LocalMods/CharacterSwitch/Autorun...**. Make sure that the path is correct or it will **not** show up in game.
 
 # How to use
