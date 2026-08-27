@@ -10,7 +10,7 @@ This is a mod for Barotrauma, which enables switching between characters in a mu
 1. Start Barotrauma and press **Mods**. Here you should see LuaCsForBarotrauma and CharacterSwitch. Make sure these are enabled.
 2. Press **Host Server** and switch the Server executable from Vanilla to **LuaCsForBarotrauma - DedicatedServer**
 3. When in game, press Z or X to cycle between characters. You can also click on the character you want to switch to in the top left corner under the crew menu.
-4. If the mod breaks/doesn't work
+4. If the mod breaks/doesn't work, press **F3** to open the developer console and check for errors.
 
 # Notes
 This was made for personal use, the code is messy and comments are sparse. It is not tested for stability apart from personal use, and might break your save file. Barotrauma stores backups for campaigns, make sure these work in case there are issues. If you have any issues I recommend you file a bug report and i might take a look at it.
