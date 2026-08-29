@@ -1,4 +1,4 @@
-if SERVER then return end
+if SERVER or Game.IsSingleplayer then return end
 
 local frame = GUI.Frame(
     GUI.RectTransform(
@@ -71,7 +71,7 @@ local playableCharacterList = {}
 local currentCharacterIndex = nil
 
 local function FindMainCharacter()
-    print("Finding main character")
+    print("[CharacterSwitch] Finding main character")
     for _, client in pairs(Client.ClientList) do
         if client.Character == Character.Controlled and Character.Controlled ~= nil then
             localClient = client
@@ -80,12 +80,12 @@ local function FindMainCharacter()
             return true
         end
     end
-    print("Failed to find main character")
+    print("[CharacterSwitch] Failed to find main character")
     return false
 end
 
 local function RefreshCharacterList()
-    print("Refreshing player list")
+    print("[CharacterSwitch] Refreshing player list")
     menuList.Content.ClearChildren()
 
     local function CreateCharacterButton(character, isMain)
@@ -133,23 +133,46 @@ local function RefreshCharacterList()
     end
 end
 
+function EnableOrderGlow(character)
+    local cm = Game.GameSession.CrewManager
+
+    if Character.Controlled ~= character then
+        if character.CurrentOrders ~= nil then
+            for _, order in pairs(character.CurrentOrders) do
+                if order ~= nil then
+                    print("[CharacterSwitch] Refreshing highlight: ", character.Name)
+                    cm.SetOrderHighlight(
+                        character,
+                        order.Identifier,
+                        order.Option
+                    )
+                end
+            end
+        end
+    else
+        print("[CharacterSwitch] Waiting for character switch")
+        Timer.Wait(function()
+            EnableOrderGlow(character)
+        end, 500)
+    end
+end
+
+
 function ChangeCharacter(targetChar)
+    EnableOrderGlow(Character.Controlled)
     local msg = Networking.Start("ChangeCharacter")
     msg.WriteString(targetChar.Name)
     Networking.Send(msg)
-    return
 end
 
 local function RefreshPlayableCharacterList()
-
-    local crewManager = Game.GameSession.CrewManager
-
     playableCharacterList = {}
     currentCharacterIndex = nil
 
-    for _, character in pairs(crewManager.GetCharacters()) do
+    for _, character in pairs(Character.CharacterList) do
         if character ~= nil
             and not character.IsDead
+            and (Util.FindClientCharacter(character) == nil or character == mainCharacter)
             and character.TeamID == myTeam then
             table.insert(playableCharacterList, character)
         end
@@ -194,7 +217,7 @@ local function RefreshData(loop)
             if FindMainCharacter() then
                 RefreshPlayableCharacterList()
                 RefreshCharacterList()
-                print("Refresh complete")
+                print("[CharacterSwitch] Refresh complete")
             else
                 RefreshData(true)
             end
@@ -203,17 +226,17 @@ local function RefreshData(loop)
         if FindMainCharacter() then
             RefreshPlayableCharacterList()
             RefreshCharacterList()
-            print("Refresh complete")
+            print("[CharacterSwitch] Refresh complete")
         end
     end
 end
 
 Hook.Add("think", "CycleCharacter", function()
     if PlayerInput.KeyHit(Keys.Z) then
-        print("Keypress Z")
+        print("[CharacterSwitch] Keypress Z")
         CycleCharacter(1)
     elseif PlayerInput.KeyHit(Keys.X) then
-        print("Keypress X")
+        print("[CharacterSwitch] Keypress X")
         CycleCharacter(-1)
     end
 end)
@@ -227,7 +250,7 @@ Hook.Patch("Barotrauma.GameScreen", "AddToGUIUpdateList", function()
 end)
 
 Hook.Add("roundStart", "UpdateCharacterSwitchMenu", function()
-    print("ROUND START")
+    print("[CharacterSwitch] ROUND START")
     RefreshData(true)
 end)
 
@@ -247,7 +270,7 @@ Hook.Patch(
         local children = crewList.Content.Children
 
         if (crewList.HasDraggedElementIndexChanged) then
-            print("=== CREW REORDERED ===")
+            print("[CharacterSwitch] === CREW REORDERED ===")
             playableCharacterList = {}
             for component in children do
                 if component ~= nil then

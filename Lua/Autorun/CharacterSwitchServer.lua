@@ -4,7 +4,7 @@ print("SCRIPT LOADED")
 
 local clientNameList = {}
 
-function UpdateClientNameList()
+local function UpdateClientNameList()
     clientNameList = {}
     for _, client in pairs(Client.ClientList) do
         if client.Character ~= nil then
@@ -16,7 +16,7 @@ end
 local function ChangeCharacter(clientName, targetName)
     local command = string.format('setclientcharacter "%s" "%s"', clientName, targetName)
     Game.ExecuteCommand(command)
-    print("Changed Character")
+    print("[CharacterSwitch] Changed Character")
 end
 
 Networking.Receive("ChangeCharacter", function(msg, client)
@@ -42,8 +42,8 @@ Hook.Patch(
     },
     function(instance, ptable)
         if ptable["isRemotePlayer"] == true and ptable["hasAi"] == false then
-            print("[CREATE PREFAB] *** PLAYER CHARACTER ***")
-            print("[CREATE PREFAB] forcing hasAi=true")
+            print("*** PLAYER CHARACTER ***")
+            print("forcing hasAi=true")
 
             ptable["hasAi"] = true
         end
