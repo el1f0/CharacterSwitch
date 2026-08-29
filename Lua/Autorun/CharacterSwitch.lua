@@ -1,68 +1,11 @@
 if SERVER or Game.IsSingleplayer then return end
 
-local frame = GUI.Frame(
-    GUI.RectTransform(
-        Vector2.One
-    ),
-    nil
-)
-frame.CanBeFocused = false
-
-local menu = GUI.Frame(
-    GUI.RectTransform(
-        Vector2.One,
-        frame.RectTransform,
-        GUI.Anchor.Center
-    ),
-    nil
-)
-menu.CanBeFocused = false
-menu.Visible = false
-
-local closeButton = GUI.Button(
-    GUI.RectTransform(
-        Vector2.One,
-        menu.RectTransform,
-        GUI.Anchor.Center
-    ),
-    "",
-    GUI.Alignment.Center,
-    nil
-)
-closeButton.OnClicked = function()
-    menu.Visible = not menu.Visible
-end
-
-local button = GUI.Button(
-    GUI.RectTransform(
-        Vector2(0.2, 0.2),
-        frame.RectTransform,
-        GUI.Anchor.TopRight
-    ),
-    "Character Switch",
-    GUI.Alignment.Center,
-    "GUIButtonLarge"
-)
-button.RectTransform.AbsoluteOffset = Point(25, 100)
-button.OnClicked = function()
-    menu.Visible = not menu.Visible
-end
-
-local menuContent = GUI.Frame(
-    GUI.RectTransform(
-        Vector2(0.3, 0.6),
-        menu.RectTransform,
-        GUI.Anchor.Center
-    )
-)
-
-local menuList = GUI.ListBox(
-    GUI.RectTransform(
-        Vector2.One,
-        menuContent.RectTransform,
-        GUI.Anchor.BottomCenter
-    )
-)
+local frame
+local menu
+local closeButton
+local button
+local menuContent
+local menuList
 
 local localClient = nil
 local mainCharacter = nil
@@ -84,13 +27,78 @@ local function FindMainCharacter()
     return false
 end
 
-local function RefreshCharacterList()
+local function DrawCharacterSwitchMenu()
+    frame = GUI.Frame(
+        GUI.RectTransform(
+            Vector2.One
+        ),
+        nil
+    )
+    frame.CanBeFocused = false
+
+    menu = GUI.Frame(
+        GUI.RectTransform(
+            Vector2.One,
+            frame.RectTransform,
+            GUI.Anchor.Center
+        ),
+        nil
+    )
+    menu.CanBeFocused = false
+    menu.Visible = false
+
+    closeButton = GUI.Button(
+        GUI.RectTransform(
+            Vector2.One,
+            menu.RectTransform,
+            GUI.Anchor.Center
+        ),
+        "",
+        GUI.Alignment.Center,
+        nil
+    )
+    closeButton.OnClicked = function()
+        menu.Visible = not menu.Visible
+    end
+
+    button = GUI.Button(
+        GUI.RectTransform(
+            Vector2(0.2, 0.2),
+            frame.RectTransform,
+            GUI.Anchor.TopRight
+        ),
+        "Character Switch",
+        GUI.Alignment.Center,
+        "GUIButtonLarge"
+    )
+    button.RectTransform.AbsoluteOffset = Point(25, 100)
+    button.OnClicked = function()
+        menu.Visible = not menu.Visible
+    end
+
+    menuContent = GUI.Frame(
+        GUI.RectTransform(
+            Vector2(0.3, 0.6),
+            menu.RectTransform,
+            GUI.Anchor.Center
+        )
+    )
+
+    menuList = GUI.ListBox(
+        GUI.RectTransform(
+            Vector2.One,
+            menuContent.RectTransform,
+            GUI.Anchor.BottomCenter
+        )
+    )
+end
+
+function RefreshCharacterList()
     print("[CharacterSwitch] Refreshing player list")
     menuList.Content.ClearChildren()
 
     local function CreateCharacterButton(character, isMain)
         local scale = GUI.Scale
-
         local characterSelectButton = GUI.Button(
             GUI.RectTransform(Vector2(1, 0.025), menuList.Content.RectTransform), character.Name, GUI.Alignment.Left
         )
@@ -153,7 +161,7 @@ function EnableOrderGlow(character)
         print("[CharacterSwitch] Waiting for character switch")
         Timer.Wait(function()
             EnableOrderGlow(character)
-        end, 500)
+        end, 10)
     end
 end
 
@@ -216,7 +224,9 @@ local function RefreshData(loop)
         Timer.Wait(function()
             if FindMainCharacter() then
                 RefreshPlayableCharacterList()
-                RefreshCharacterList()
+                if menu ~= nil then
+                    RefreshCharacterList()
+                end
                 print("[CharacterSwitch] Refresh complete")
             else
                 RefreshData(true)
@@ -225,7 +235,9 @@ local function RefreshData(loop)
     else
         if FindMainCharacter() then
             RefreshPlayableCharacterList()
-            RefreshCharacterList()
+            if menu ~= nil then
+                RefreshCharacterList()
+            end
             print("[CharacterSwitch] Refresh complete")
         end
     end
@@ -242,6 +254,8 @@ Hook.Add("think", "CycleCharacter", function()
 end)
 
 Hook.Patch("Barotrauma.GameScreen", "AddToGUIUpdateList", function()
+    if menu == nil then return end
+
     if menu.Visible and PlayerInput.SecondaryMouseButtonClicked() then
         menu.Visible = false
     end
@@ -291,4 +305,5 @@ Hook.Patch(
     Hook.HookMethodType.After
 )
 
+--DrawCharacterSwitchMenu()
 RefreshData(false)
