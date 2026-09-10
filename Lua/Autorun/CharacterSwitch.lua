@@ -244,6 +244,10 @@ local function RefreshData(loop)
 end
 
 Hook.Add("think", "CycleCharacter", function()
+    if GUI.KeyboardDispatcher.Subscriber ~= nil then
+        return
+    end
+
     if PlayerInput.KeyHit(Keys.Z) then
         print("[CharacterSwitch] Keypress Z")
         CycleCharacter(1)
