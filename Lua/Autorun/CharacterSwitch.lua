@@ -168,7 +168,6 @@ end
 
 
 function ChangeCharacter(targetChar)
-    EnableOrderGlow(Character.Controlled)
     --EnableOrderGlow(Character.Controlled)
     local msg = Networking.Start("ChangeCharacter")
     msg.WriteString(targetChar.Name)
@@ -176,6 +175,7 @@ function ChangeCharacter(targetChar)
 end
 
 local function RefreshPlayableCharacterList()
+    print("[CharacterSwitch] Refreshing character list")
     playableCharacterList = {}
     currentCharacterIndex = nil
 
@@ -184,6 +184,7 @@ local function RefreshPlayableCharacterList()
             and not character.IsDead
             and (Util.FindClientCharacter(character) == nil or character == mainCharacter)
             and character.TeamID == myTeam then
+            print("[CharacterSwitch] Found character: ", character.Name)
             table.insert(playableCharacterList, character)
         end
     end
@@ -229,7 +230,6 @@ local function RefreshData(loop)
                 if menu ~= nil then
                     RefreshCharacterList()
                 end
-                print("[CharacterSwitch] Refresh complete")
             else
                 RefreshData(true)
             end
@@ -240,7 +240,6 @@ local function RefreshData(loop)
             if menu ~= nil then
                 RefreshCharacterList()
             end
-            print("[CharacterSwitch] Refresh complete")
         end
     end
 end
