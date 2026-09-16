@@ -142,6 +142,7 @@ function RefreshCharacterList()
 end
 
 function EnableOrderGlow(character)
+    -- Currently broken
     local cm = Game.GameSession.CrewManager
 
     if Character.Controlled ~= character then
@@ -168,6 +169,7 @@ end
 
 function ChangeCharacter(targetChar)
     EnableOrderGlow(Character.Controlled)
+    --EnableOrderGlow(Character.Controlled)
     local msg = Networking.Start("ChangeCharacter")
     msg.WriteString(targetChar.Name)
     Networking.Send(msg)
