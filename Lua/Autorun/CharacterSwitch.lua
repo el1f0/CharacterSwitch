@@ -192,12 +192,16 @@ end
 
 local function CycleCharacter(offset)
     local startOffset = offset
+    if #playableCharacterList <= 1 then return end
     for _, character in pairs(playableCharacterList) do
         if character == localClient.Character then
             currentCharacterIndex = _
             break
+        else
+            currentCharacterIndex = 0
         end
     end
+
     while true do
         if (currentCharacterIndex + offset > #playableCharacterList) then
             currentCharacterIndex = 0
@@ -210,7 +214,7 @@ local function CycleCharacter(offset)
         if Util.FindClientCharacter(playableCharacterList[currentCharacterIndex+offset]) == nil then
             ChangeCharacter(playableCharacterList[currentCharacterIndex+offset])
             break
-        elseif offset > #playableCharacterList then
+        elseif offset >= #playableCharacterList then
             break
         else
             if offset > 0 then
