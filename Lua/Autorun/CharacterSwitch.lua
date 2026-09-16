@@ -314,5 +314,15 @@ Hook.Patch(
     Hook.HookMethodType.After
 )
 
+Hook.Add("character.death", "RefreshDataOnCharacterDeath", function(character)
+    if character.TeamID == myTeam then
+        RefreshPlayableCharacterList()
+    end
+end)
+
+Hook.Add("character.created", "RefreshDataOnCharacterCreated", function(character)
+    RefreshData(true)
+end)
+
 --DrawCharacterSwitchMenu()
 RefreshData(false)
