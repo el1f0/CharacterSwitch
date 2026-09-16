@@ -16,7 +16,7 @@ end
 local function ChangeCharacter(clientName, targetName)
     local command = string.format('setclientcharacter "%s" "%s"', clientName, targetName)
     Game.ExecuteCommand(command)
-    print("[CharacterSwitch] Changed Character")
+    print("[CharacterSwitch] Changed Character to ", targetName)
 end
 
 Networking.Receive("ChangeCharacter", function(msg, client)
@@ -71,14 +71,14 @@ Hook.Patch(
                 local save = inc.ReadBoolean()
                 local quitCampaign = inc.ReadBoolean()
 
-                if ending then
-                    UpdateClientNameList()
-                    for clientName in clientNameList do
-                        ChangeCharacter(clientName, clientName)
-                    end
-                    if save then
-                        print("SAVE & QUIT")
-                    end
+                UpdateClientNameList()
+                for clientName in clientNameList do
+                    ChangeCharacter(clientName, clientName)
+                end
+                if save then
+                    print("[CharacterSwitch] SAVE & QUIT")
+                else
+                    print("[CharacterSwitch] END ROUND")
                 end
             end
         end
@@ -87,10 +87,11 @@ Hook.Patch(
     end
 )
 
-Hook.Add("roundEnd", "ChangeCharacterAtRoundEnd", function()
-    print("ENDING ROUND")
+Hook.add("roundEnd", function()
     UpdateClientNameList()
     for clientName in clientNameList do
         ChangeCharacter(clientName, clientName)
     end
+    print("[CharacterSwitch] ROUND END")
+
 end)
