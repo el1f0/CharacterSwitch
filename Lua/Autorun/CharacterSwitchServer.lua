@@ -1,6 +1,6 @@
 if CLIENT then return end
 
-print("SCRIPT LOADED")
+print("[CharacterSwitch] SCRIPT LOADED")
 
 local clientNameList = {}
 
